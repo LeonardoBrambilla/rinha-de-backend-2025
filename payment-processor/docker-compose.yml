@@ -3,12 +3,7 @@ x-service-templates:
     image: zanfranceschi/payment-processor:amd64-20250707101540
     networks:
       - payment-processor
-    deploy:
-      resources:
-        limits:
-          cpus: "1.5"
-          memory: "100MB"
-  
+
   payment-processor-db: &payment-processor-db
     image: postgres:17-alpine
     networks:
@@ -19,11 +14,6 @@ x-service-templates:
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_USER=postgres
       - POSTGRES_DB=rinha
-    deploy:
-      resources:
-        limits:
-          cpus: "1.5"
-          memory: "250MB"
 
 services:
   payment-processor-1:
