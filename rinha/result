@@ -1,0 +1,29 @@
+  █ TOTAL RESULTS
+
+    CUSTOM
+    balance_inconsistency_amount...: 59.7     0.97715/s
+    default_total_amount...........: 189328.6 3098.86886/s
+    default_total_fee..............: 9466.43  154.943443/s
+    default_total_requests.........: 9514     155.722053/s
+    fallback_total_amount..........: 43302.4  708.759579/s
+    fallback_total_fee.............: 6495.36  106.313937/s
+    fallback_total_requests........: 2176     35.616059/s
+    total_transactions_amount......: 232631   3807.628439/s
+    transactions_failure...........: 30       0.49103/s
+    transactions_success...........: 15149    247.953898/s
+
+    HTTP
+    http_req_duration..............: p(98)=20.78ms p(99)=37.6ms  count=15229
+      { expected_response:true }...: p(98)=18.94ms p(99)=30.99ms count=15199
+    http_req_failed................: 0.19%    30 out of 15229
+    http_reqs......................: 15229    249.263312/s
+
+    EXECUTION
+    iteration_duration.............: p(98)=1.02s   p(99)=1.03s   count=15191
+    iterations.....................: 15191    248.64134/s
+    vus............................: 107      min=9           max=499
+    vus_max........................: 504      min=504         max=504
+
+    NETWORK
+    data_received..................: 4.4 MB   73 kB/s
+    data_sent......................: 3.1 MB   50 kB/s

@@ -1,0 +1,98 @@
+services:
+  nginx:
+    image: nginx:alpine
+    container_name: payment_proxy
+    ports:
+      - "9999:9999"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - app1
+      - app2
+    networks:
+      - backend
+    deploy:
+      resources:
+        limits:
+          cpus: "0.10"
+          memory: "16MB"
+
+  app1:
+    build: .
+    environment:
+      PORT: 9999
+      DATABASE_URL: postgres://root:root@payment-processor-db:5432/rinha
+      PAYMENT_PROCESSOR_URL_DEFAULT: http://payment-processor-default:8080
+      PAYMENT_PROCESSOR_URL_FALLBACK: http://payment-processor-fallback:8080
+    networks:
+      - backend
+      - payment-processor
+    deploy:
+      resources:
+        limits:
+          cpus: "0.45"
+          memory: "96MB"
+
+  app2:
+    build: .
+    environment:
+      PORT: 9999
+      DATABASE_URL: postgres://root:root@payment-processor-db:5432/rinha
+      PAYMENT_PROCESSOR_URL_DEFAULT: http://payment-processor-default:8080
+      PAYMENT_PROCESSOR_URL_FALLBACK: http://payment-processor-fallback:8080
+    networks:
+      - backend
+      - payment-processor
+    deploy:
+      resources:
+        limits:
+          cpus: "0.45"
+          memory: "96MB"
+
+  payment-processor-db:
+    image: postgres:17-alpine
+    container_name: postgres
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: rinha
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+      - db_data:/var/lib/postgresql/data
+    command:
+      - postgres
+      - -c
+      - max_connections=100
+      - -c
+      - shared_buffers=64MB
+      - -c
+      - effective_cache_size=128MB
+      - -c
+      - work_mem=2MB
+      - -c
+      - maintenance_work_mem=16MB
+      - -c
+      - temp_buffers=8MB
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U root -d rinha"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+      start_period: 15s
+    networks:
+      - backend
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: "0.30"
+          memory: "128MB"
+
+volumes:
+  db_data:
+
+networks:
+  backend:
+    driver: bridge
+  payment-processor:
+    external: true
